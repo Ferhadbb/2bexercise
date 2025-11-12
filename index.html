@@ -356,10 +356,10 @@
                 <div class="form-group">
                     <label for="taskPriority">Priority *</label>
                     <select id="taskPriority" name="taskPriority" required>
-                        <option value="">-- Choose Priority --</option>
+                        <option value="">-- Choose --</option>
                     </select>
                     <script>
-                        priorities.forEach((item, index) => {
+                        priorities.forEach(function(item, index) {
                             let optionHTML = `<option value="${item.value}">${item.label}</option>`;
                             document.getElementById("taskPriority").insertAdjacentHTML('beforeend', optionHTML);
                         });
@@ -369,10 +369,10 @@
                 <div class="form-group">
                     <label for="taskCategory">Category *</label>
                     <select id="taskCategory" name="taskCategory" required>
-                        <option value="">-- Choose Category --</option>
+                        <option value="">-- Choose --</option>
                     </select>
                     <script>
-                        categories.forEach((item, index) => {
+                        categories.forEach(function(item, index) {
                             let optionHTML = `<option value="${item.value}">${item.label}</option>`;
                             document.getElementById("taskCategory").insertAdjacentHTML('beforeend', optionHTML);
                         });
@@ -391,10 +391,10 @@
                 <div class="form-group">
                     <label for="taskStatus">Status *</label>
                     <select id="taskStatus" name="taskStatus" required>
-                        <option value="">-- Choose Status --</option>
+                        <option value="">-- Choose --</option>
                     </select>
                     <script>
-                        statuses.forEach((item, index) => {
+                        statuses.forEach(function(item, index) {
                             let optionHTML = `<option value="${item.value}">${item.label}</option>`;
                             document.getElementById("taskStatus").insertAdjacentHTML('beforeend', optionHTML);
                         });
