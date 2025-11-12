@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple and efficient To-Do List application for managing your daily tasks">
+    <meta name="author" content="Ferhad">
+    <title>My To-Do List</title>
+    <script>
+        const priorities = [
+            { value: "high", label: "High Priority" },
+            { value: "medium", label: "Medium Priority" },
+            { value: "low", label: "Low Priority" }
+        ];
+
+        const categories = [
+            { value: "work", label: "Work" },
+            { value: "personal", label: "Personal" },
+            { value: "shopping", label: "Shopping" },
+            { value: "health", label: "Health" },
+            { value: "education", label: "Education" },
+            { value: "other", label: "Other" }
+        ];
+
+        const statuses = [
+            { value: "pending", label: "Pending" },
+            { value: "in-progress", label: "In Progress" },
+            { value: "completed", label: "Completed" }
+        ];
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --primary-dark: #357abd;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #ddd;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--light-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .form-container {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        input[type="text"]:invalid:not(:placeholder-shown),
+        input[type="date"]:invalid:not(:placeholder-shown),
+        select:invalid:not(:placeholder-shown) {
+            border-color: var(--danger-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .task-list {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .task-list h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .tasks-placeholder {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        .tasks-placeholder p {
+            font-size: 1.1rem;
+        }
+
+        footer {
+            background-color: var(--text-dark);
+            color: var(--white);
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        footer p:first-child {
+            font-weight: 600;
+        }
+
+        @media (min-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            main {
+                padding: 3rem 2rem;
+            }
+
+            .form-container,
+            .task-list {
+                padding: 2.5rem;
+            }
+
+            .form-actions {
+                justify-content: flex-end;
+            }
+
+            .btn {
+                flex: 0 1 auto;
+                min-width: 150px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            header h1 {
+                font-size: 3rem;
+            }
+
+            main {
+                max-width: 900px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        *:focus-visible {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        @media print {
+            header,
+            footer,
+            .form-actions {
+                display: none;
+            }
+
+            body {
+                background: white;
+            }
+
+            .form-container,
+            .task-list {
+                box-shadow: none;
+                border: 1px solid var(--border-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My To-Do List</h1>
+        <p>Organize your tasks efficiently</p>
+    </header>
+
+    <main>
+        <section class="form-container">
+            <h2>Add New Task</h2>
+            <form id="taskForm" action="#" method="post">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title *</label>
+                    <input 
+                        type="text" 
+                        id="taskTitle" 
+                        name="taskTitle" 
+                        placeholder="Enter task title" 
+                        required 
+                        minlength="3"
+                        maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDescription">Task Description</label>
+                    <textarea 
+                        id="taskDescription" 
+                        name="taskDescription" 
+                        placeholder="Enter task description (optional)" 
+                        rows="4"
+                        maxlength="500"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskPriority">Priority *</label>
+                    <select id="taskPriority" name="taskPriority" required>
+                        <option value="">-- Choose Priority --</option>
+                    </select>
+                    <script>
+                        priorities.forEach((item, index) => {
+                            let optionHTML = `<option value="${item.value}">${item.label}</option>`;
+                            document.getElementById("taskPriority").insertAdjacentHTML('beforeend', optionHTML);
+                        });
+                    </script>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskCategory">Category *</label>
+                    <select id="taskCategory" name="taskCategory" required>
+                        <option value="">-- Choose Category --</option>
+                    </select>
+                    <script>
+                        categories.forEach((item, index) => {
+                            let optionHTML = `<option value="${item.value}">${item.label}</option>`;
+                            document.getElementById("taskCategory").insertAdjacentHTML('beforeend', optionHTML);
+                        });
+                    </script>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDueDate">Due Date *</label>
+                    <input 
+                        type="date" 
+                        id="taskDueDate" 
+                        name="taskDueDate" 
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskStatus">Status *</label>
+                    <select id="taskStatus" name="taskStatus" required>
+                        <option value="">-- Choose Status --</option>
+                    </select>
+                    <script>
+                        statuses.forEach((item, index) => {
+                            let optionHTML = `<option value="${item.value}">${item.label}</option>`;
+                            document.getElementById("taskStatus").insertAdjacentHTML('beforeend', optionHTML);
+                        });
+                    </script>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="task-list">
+            <h2>Your Tasks</h2>
+            <div class="tasks-placeholder">
+                <p>No tasks yet. Add your first task using the form above!</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Ferhad. All rights reserved.</p>
+    </footer>
+</body>
+</html>
